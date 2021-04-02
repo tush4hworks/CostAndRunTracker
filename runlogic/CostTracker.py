@@ -30,8 +30,8 @@ def consumption_poller():
         logger.info(f'Adding record  {timestamp}|{service}|{tag}|{cost}')
         table_helper.add_row(cost=cost, service=service, tag=tag, timestamp=timestamp)
 
-        logger.info('Sleeping for a minute')
-        time.sleep(60)
+        logger.info('Sleeping for 2 minutes')
+        time.sleep(120)
 
 
 class ProcessTracker:
