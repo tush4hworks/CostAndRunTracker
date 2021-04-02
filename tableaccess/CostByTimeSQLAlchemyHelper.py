@@ -141,11 +141,11 @@ class CbyTSQLAlchemyTableHelper:
         session = self.factory()
         objs = session.query(cost_by_time).filter(
             cost_by_time.timestamp > self._effective_time_window(n_hour_prior)).with_entities(
-            func.strftime('%Y-%m-%d %H:%M', cost_by_time.timestamp),
+            func.strftime('%Y-%m-%d %H', cost_by_time.timestamp),
             cost_by_time.service, cost_by_time.tag,
-            func.sum(cost_by_time.cost_per_hour)).group_by(
+            func.avg(cost_by_time.cost_per_hour)).group_by(
             cost_by_time.service, cost_by_time.tag,
-            func.strftime('%Y-%m-%d %H:%M', cost_by_time.timestamp)).order_by(
+            func.strftime('%Y-%m-%d %H', cost_by_time.timestamp)).order_by(
             cost_by_time.timestamp.desc()).all()
         session.close()
         return [tag_and_service_agg(*obj)._asdict() for obj in objs]
