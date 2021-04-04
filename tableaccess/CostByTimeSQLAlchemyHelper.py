@@ -171,12 +171,12 @@ class CbyTSQLAlchemyTableHelper:
         summation_over_same_timestamp = in_time_window.with_entities(
             func.strftime('%Y-%m-%d %H:%M', cost_by_time.timestamp).label('time_minute'),
             cost_by_time.service,
-            func.sum(cost_by_time.cost_per_hour).label('cost_across_services')).group_by(
+            func.sum(cost_by_time.cost_per_hour).label('cost_across_tags')).group_by(
             cost_by_time.service, 'time_minute').subquery()
         # Query2
         objs = session.query(func.strftime('%Y-%m-%d %H', summation_over_same_timestamp.c.time_minute),
                              summation_over_same_timestamp.c.service,
-                             func.avg(summation_over_same_timestamp.c.cost_across_services)).group_by(
+                             func.avg(summation_over_same_timestamp.c.cost_across_tags)).group_by(
             func.strftime('%Y-%m-%d %H', summation_over_same_timestamp.c.time_minute)).order_by(
             summation_over_same_timestamp.c.time_minute.desc()).all()
         session.close()
@@ -219,4 +219,4 @@ class CbyTSQLAlchemyTableHelper:
 if __name__ == '__main__':
     cbyt = CbyTSQLAlchemyTableHelper()
     # cbyt.add_row(2000, service='XX', tag='DFX', timestamp=datetime.datetime.now())
-    print(cbyt.aggregate_by_service(6))
+    print(cbyt.aggregate_by_service(72))
