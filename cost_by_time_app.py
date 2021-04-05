@@ -35,7 +35,7 @@ def get_latest_for_all_services(cloud_type):
         return make_response(jsonify(data))
     except Exception as e:
         cost_app.logger.exception(e)
-        return make_response(jsonify({'Exception': e.__repr__()}), 400)
+        return make_response(jsonify({'Exception': e.__repr__()}), 500)
 
 
 @cost_app.route("/api/v1/<cloud_type>/tag", methods=["GET"])
@@ -46,7 +46,7 @@ def get_latest_for_all_tags(cloud_type):
         return make_response(jsonify(data))
     except Exception as e:
         cost_app.logger.exception(e)
-        return make_response(jsonify({'Exception': e.__repr__()}), 400)
+        return make_response(jsonify({'Exception': e.__repr__()}), 500)
 
 
 @cost_app.route("/api/v1/<cloud_type>/tag/<tag>", methods=["GET"])
@@ -57,7 +57,7 @@ def get_latest_by_tag(cloud_type, tag):
         return make_response(jsonify(data))
     except Exception as e:
         cost_app.logger.exception(e)
-        return make_response(jsonify({'Exception': e.__repr__()}), 400)
+        return make_response(jsonify({'Exception': e.__repr__()}), 500)
 
 
 @cost_app.route("/api/v1/<cloud_type>/service/<service>", methods=["GET"])
@@ -68,7 +68,7 @@ def get_latest_by_service(cloud_type, service):
         return make_response(jsonify(data))
     except Exception as e:
         cost_app.logger.exception(e)
-        return make_response(jsonify({'Exception': e.__repr__()}), 400)
+        return make_response(jsonify({'Exception': e.__repr__()}), 500)
 
 
 @cost_app.route("/api/v1/<cloud_type>/service/history", methods=["GET"])
@@ -84,7 +84,7 @@ def get_service_history(cloud_type):
         return make_response(jsonify(data))
     except Exception as e:
         cost_app.logger.exception(e)
-        return make_response(jsonify({'Exception': e.__repr__()}), 400)
+        return make_response(jsonify({'Exception': e.__repr__()}), 500)
 
 
 @cost_app.route("/api/v1/<cloud_type>/tag/history", methods=["GET"])
@@ -98,7 +98,7 @@ def get_tag_history(cloud_type):
         return make_response(jsonify(data))
     except Exception as e:
         cost_app.logger.exception(e)
-        return make_response(jsonify({'Exception': e.__repr__()}), 400)
+        return make_response(jsonify({'Exception': e.__repr__()}), 500)
 
 
 @cost_app.route("/api/v1/<cloud_type>/service/tag/history", methods=["GET"])
@@ -110,7 +110,7 @@ def get_service_and_tag_history(cloud_type):
         return make_response(jsonify(data))
     except Exception as e:
         cost_app.logger.exception(e)
-        return make_response(jsonify({'Exception': e.__repr__()}), 400)
+        return make_response(jsonify({'Exception': e.__repr__()}), 500)
 
 
 if __name__ == '__main__':
