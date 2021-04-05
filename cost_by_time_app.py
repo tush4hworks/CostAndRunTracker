@@ -3,6 +3,7 @@ from logging.handlers import RotatingFileHandler
 
 from flask import Flask, make_response, jsonify, request
 from flask_cors import CORS
+from flask_swagger_ui import get_swaggerui_blueprint
 
 from runlogic.CostTracker import ProcessTracker
 from tableaccess.AccessFactory import AccessFactory
@@ -11,6 +12,20 @@ from tableaccess.properties import CloudType
 cost_app = Flask(__name__)
 
 CORS(cost_app)
+
+SWAGGER_URL = '/swagger'
+API_URL = '/static/swagger.json'
+SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': "E2E COST BY TRACKER APP"
+    }
+)
+cost_app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
+
+# Uncomment below line to develop Swagger Spec so flask doesn't cache static content (swagger.json in this case)
+# cost_app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 table_helper = AccessFactory.get_cost_by_time_db_conn()
 

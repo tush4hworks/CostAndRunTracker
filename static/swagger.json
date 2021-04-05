@@ -1,0 +1,362 @@
+{
+  "openapi": "3.0.0",
+  "validatorUrl": null ,
+  "info": {
+    "description": "",
+    "version": "1.0",
+    "title": "e2e cloud cost tracker app",
+    "contact": {
+      "email": "e2einteropteam@cloudera.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "CLOUD_COST_TRACKER",
+      "description": "Near real-time usage of cloud resources"
+    }
+  ],
+  "paths": {
+    "/api/v1/{cloud_type}/service": {
+      "parameters": [
+        {
+          "name": "cloud_type",
+          "in": "path",
+          "required": true,
+          "description": "CloudType",
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": [
+          "serviceCostInfos"
+        ],
+        "summary": "Returns latest consumption of all services for the requested CloudType",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/serviceInfos"
+            }
+          },
+          "500": {
+            "description": "Failed. Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/{cloud_type}/tag": {
+      "parameters": [
+        {
+          "name": "cloud_type",
+          "in": "path",
+          "required": true,
+          "description": "CloudType",
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": [
+          "tagCostInfos"
+        ],
+        "summary": "Returns latest consumption of all tags for the requested CloudType",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/tagInfos"
+            }
+          },
+          "500": {
+            "description": "Failed. Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/{cloud_type}/service/{service}": {
+      "parameters": [
+        {
+          "name": "cloud_type",
+          "in": "path",
+          "required": true,
+          "description": "CloudType",
+          "type": "string"
+        },
+        {
+          "name": "service",
+          "in": "path",
+          "required": true,
+          "description": "Service Name",
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": [
+          "serviceCostInfo"
+        ],
+        "summary": "Returns latest consumption of requested service for the requested CloudType",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/serviceInfo"
+            }
+          },
+          "500": {
+            "description": "Failed. Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/{cloud_type}/tag/{tag}": {
+      "parameters": [
+        {
+          "name": "cloud_type",
+          "in": "path",
+          "required": true,
+          "description": "CloudType",
+          "type": "string"
+        },
+        {
+          "name": "tag",
+          "in": "path",
+          "required": true,
+          "description": "Tag Name",
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": [
+          "tagCostInfo"
+        ],
+        "summary": "Returns latest consumption of requested tag for the requested CloudType",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/tagInfo"
+            }
+          },
+          "500": {
+            "description": "Failed. Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/{cloud_type}/tag/history": {
+      "parameters": [
+        {
+          "name": "cloud_type",
+          "in": "path",
+          "required": true,
+          "description": "CloudType",
+          "type": "string"
+        },
+        {
+          "name": "hours",
+          "in": "query",
+          "required": false,
+          "description": "Last n hours",
+          "type": "integer"
+        },
+        {
+          "name": "tag",
+          "in": "query",
+          "required": false,
+          "description": "tag filter",
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": [
+          "tagCostHistory"
+        ],
+        "summary": "Returns aggregated estimated per hour consumption of tags for the requested CloudType",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/tagInfos"
+            }
+          },
+          "500": {
+            "description": "Failed. Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/{cloud_type}/service/history": {
+      "parameters": [
+        {
+          "name": "cloud_type",
+          "in": "path",
+          "required": true,
+          "description": "CloudType",
+          "type": "string"
+        },
+        {
+          "name": "hours",
+          "in": "query",
+          "required": false,
+          "description": "Last n hours",
+          "type": "integer"
+        },
+        {
+          "name": "service",
+          "in": "query",
+          "required": false,
+          "description": "service filter",
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": [
+          "serviceCostHistory"
+        ],
+        "summary": "Returns aggregated estimated per hour consumption of services for the requested CloudType",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/serviceInfos"
+            }
+          },
+          "500": {
+            "description": "Failed. Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/{cloud_type}/service/tag/history": {
+      "parameters": [
+        {
+          "name": "cloud_type",
+          "in": "path",
+          "required": true,
+          "description": "CloudType",
+          "type": "string"
+        },
+        {
+          "name": "hours",
+          "in": "query",
+          "required": false,
+          "description": "Last n hours",
+          "type": "integer"
+        }
+      ],
+      "get": {
+        "tags": [
+          "serviceAndTagCostHistory"
+        ],
+        "summary": "Returns aggregated estimated per hour consumption of services and tags for the requested CloudType",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/serviceAndTagInfos"
+            }
+          },
+          "500": {
+            "description": "Failed. Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "serviceInfo": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "timestamp"
+          },
+          "service": {
+            "type": "string",
+            "format": "string"
+          },
+          "cost_per_hour": {
+            "type": "float",
+            "format": "float"
+          }
+        }
+      },
+      "serviceInfos": {
+        "type": "object",
+        "properties": {
+          "serviceInfo": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/serviceInfo"
+            }
+          }
+        }
+      },
+      "tagInfo": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "timestamp"
+          },
+          "tag": {
+            "type": "string",
+            "format": "string"
+          },
+          "cost_per_hour": {
+            "type": "float",
+            "format": "float"
+          }
+        }
+      },
+      "tagInfos": {
+        "type": "object",
+        "properties": {
+          "tagInfo": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/tagInfo"
+            }
+          }
+        }
+      },
+      "serviceAndTagInfo": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "timestamp"
+          },
+          "service": {
+            "type": "string",
+            "format": "string"
+          },
+          "tag": {
+            "type": "string",
+            "format": "string"
+          },
+          "cost_per_hour": {
+            "type": "float",
+            "format": "float"
+          }
+        }
+      },
+      "serviceAndTagInfos": {
+        "type": "object",
+        "properties": {
+          "serviceAndTagInfo": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/serviceAndTagInfo"
+            }
+          }
+        }
+      }
+    }
+  }
+}
