@@ -19,7 +19,7 @@ SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
     SWAGGER_URL,
     API_URL,
     config={
-        'app_name': "E2E COST BY TRACKER APP"
+        'app_name': "E2E CLOUD_COST TRACKER APP"
     }
 )
 cost_app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
