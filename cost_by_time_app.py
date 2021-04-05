@@ -56,7 +56,7 @@ def get_latest_for_all_services(cloud_type):
 @cost_app.route("/api/v1/<cloud_type>/tag", methods=["GET"])
 def get_latest_for_all_tags(cloud_type):
     try:
-        cost_app.logger.info(f'Getting latest consumption for all tags {cloud_type}')
+        cost_app.logger.info(f'Getting latest consumption for all tags on {cloud_type}')
         data = table_helper.latest_consumption_of_all_tags(cloud_type=CloudType(cloud_type))
         return make_response(jsonify(data))
     except Exception as e:
@@ -120,8 +120,34 @@ def get_tag_history(cloud_type):
 def get_service_and_tag_history(cloud_type):
     try:
         hours = int(request.args.get('hours', 5))
-        cost_app.logger.info("Aggregating metrices for service and tags")
+        cost_app.logger.info(f"Aggregating metrices for service and tags on {cloud_type}")
         data = table_helper.aggregate_by_service_and_tag(cloud_type=CloudType(cloud_type), n_hour_prior=hours)
+        return make_response(jsonify(data))
+    except Exception as e:
+        cost_app.logger.exception(e)
+        return make_response(jsonify({'Exception': e.__repr__()}), 500)
+
+
+@cost_app.route("/api/v1/<cloud_type>/service/total", methods=["GET"])
+def get_total_consumption_by_service(cloud_type):
+    try:
+        hours = int(request.args.get('hours', 5))
+        cost_app.logger.info(f"Aggregating total consumption of service for {cloud_type}")
+        service_filter = request.args.get('service')
+        data = table_helper.total_cost_by_service(cloud_type=CloudType(cloud_type), n_hour_prior=hours, service=service_filter)
+        return make_response(jsonify(data))
+    except Exception as e:
+        cost_app.logger.exception(e)
+        return make_response(jsonify({'Exception': e.__repr__()}), 500)
+
+
+@cost_app.route("/api/v1/<cloud_type>/tag/total", methods=["GET"])
+def get_total_consumption_by_tag(cloud_type):
+    try:
+        tag_filter = request.args.get('tag')
+        hours = int(request.args.get('hours', 5))
+        cost_app.logger.info(f'Getting total tag consumption  on {cloud_type}')
+        data = table_helper.total_cost_by_tag(cloud_type=CloudType(cloud_type), n_hour_prior=hours, tag=tag_filter)
         return make_response(jsonify(data))
     except Exception as e:
         cost_app.logger.exception(e)

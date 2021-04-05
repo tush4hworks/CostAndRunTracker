@@ -11,12 +11,14 @@ from tableobjects.meta_base import ModelBase
 tag_and_service_agg = namedtuple('tag_and_service_agg', ['timestamp', 'service', 'tag', 'cost_per_hour'])
 service_agg = namedtuple('service_agg', ['timestamp', 'service', 'cost_per_hour'])
 tag_agg = namedtuple('tag_agg', ['timestamp', 'tag', 'cost_per_hour'])
+tag_total = namedtuple('tag_total', ['tag', 'total_cost'])
+service_total = namedtuple('service_total', ['service', 'total_cost'])
 
 
 class CbyTSQLAlchemyTableHelper:
     def __init__(self):
         sql_conn_path = f'sqlite:///{Properties.cost_tracker_sqlite_db}'
-        engine = sqlalchemy.create_engine(sql_conn_path, echo=True)
+        engine = sqlalchemy.create_engine(sql_conn_path, echo=False)
         ModelBase.metadata.create_all(engine)
         factory = orm.sessionmaker()
         factory.configure(bind=engine)
@@ -239,8 +241,42 @@ class CbyTSQLAlchemyTableHelper:
         session.close()
         return [(tag_agg(*obj)._asdict()) for obj in objs]
 
+    def total_cost_by_tag(self, cloud_type: CloudType, n_hour_prior=5, tag=None):
+        """
+        Estimated total cost by tag
+        :param cloud_type:
+        :param n_hour_prior:
+        :param tag:
+        :return:
+        """
+        return_list = []
+        per_hour_costs = self.aggregate_by_tag(cloud_type, n_hour_prior, tag)
+        tags = set([item['tag'] for item in per_hour_costs])
+        for tag in tags:
+            total_cost_by_tag = sum(item['cost_per_hour'] for item in filter(lambda x: x['tag'] == tag, per_hour_costs))
+            return_list.append(tag_total(tag, total_cost_by_tag)._asdict())
+        return return_list
+
+    def total_cost_by_service(self, cloud_type: CloudType, n_hour_prior=5, service=None):
+        """
+        Estimated total cost by tag
+        :param cloud_type:
+        :param n_hour_prior:
+        :param service:
+        :return:
+        """
+        return_list = []
+        per_hour_costs = self.aggregate_by_service(cloud_type, n_hour_prior, service)
+        services = set([item['service'] for item in per_hour_costs])
+        for service in services:
+            total_cost_by_service = sum(
+                item['cost_per_hour'] for item in filter(lambda x: x['service'] == service, per_hour_costs))
+            return_list.append(service_total(service, total_cost_by_service)._asdict())
+        return return_list
+
 
 if __name__ == '__main__':
     cbyt = CbyTSQLAlchemyTableHelper()
-    cbyt.add_row(cloud_type=CloudType.azure, cost=2100, service='DFX', tag='XX', timestamp=datetime.datetime.now())
-    print(cbyt.aggregate_by_service(cloud_type=CloudType.aws, n_hour_prior=10))
+    # cbyt.add_row(cloud_type=CloudType.azure, cost=2100, service='DFX', tag='XX', timestamp=datetime.datetime.now())
+    print(cbyt.aggregate_by_service(cloud_type=CloudType.aws, n_hour_prior=10, service='CloudFormation'))
+    print(cbyt.total_cost_by_service(cloud_type=CloudType.aws, n_hour_prior=10))
