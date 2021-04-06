@@ -259,7 +259,7 @@ class CbyTSQLAlchemyTableHelper:
 
     def total_cost_by_service(self, cloud_type: CloudType, n_hour_prior=5, service=None):
         """
-        Estimated total cost by tag
+        Estimated total cost by service
         :param cloud_type:
         :param n_hour_prior:
         :param service:

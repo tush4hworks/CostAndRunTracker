@@ -1,6 +1,6 @@
 {
   "openapi": "3.0.0",
-  "validatorUrl": null ,
+  "validatorUrl": null,
   "info": {
     "description": "",
     "version": "1.0",
@@ -265,6 +265,90 @@
           }
         }
       }
+    },
+    "/api/v1/{cloud_type}/service/total": {
+      "parameters": [
+        {
+          "name": "cloud_type",
+          "in": "path",
+          "required": true,
+          "description": "CloudType",
+          "type": "string"
+        },
+        {
+          "name": "hours",
+          "in": "query",
+          "required": false,
+          "description": "Last n hours",
+          "type": "integer"
+        },
+        {
+          "name": "service",
+          "in": "query",
+          "required": false,
+          "description": "Service Filter",
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": [
+          "serviceTotalCost"
+        ],
+        "summary": "Returns total cost of services for last N hours",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/serviceTotalCosts"
+            }
+          },
+          "500": {
+            "description": "Failed. Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/{cloud_type}/tag/total": {
+      "parameters": [
+        {
+          "name": "cloud_type",
+          "in": "path",
+          "required": true,
+          "description": "CloudType",
+          "type": "string"
+        },
+        {
+          "name": "hours",
+          "in": "query",
+          "required": false,
+          "description": "Last n hours",
+          "type": "integer"
+        },
+        {
+          "name": "tag",
+          "in": "query",
+          "required": false,
+          "description": "Tag Filter",
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": [
+          "tagTotalCost"
+        ],
+        "summary": "Returns total cost of tags for last N hours",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/tagTotalCosts"
+            }
+          },
+          "500": {
+            "description": "Failed. Internal Server Error"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -353,6 +437,54 @@
             "type": "object",
             "additionalProperties": {
               "$ref": "#/components/schemas/serviceAndTagInfo"
+            }
+          }
+        }
+      },
+      "serviceTotalCost": {
+        "type": "object",
+        "properties": {
+          "service": {
+            "type": "string",
+            "format": "string"
+          },
+          "total_cost": {
+            "type": "float",
+            "format": "float"
+          }
+        }
+      },
+      "serviceTotalCosts": {
+        "type": "object",
+        "properties": {
+          "serviceTotalCost": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/serviceTotalCost"
+            }
+          }
+        }
+      },
+      "tagTotalCost": {
+        "type": "object",
+        "properties": {
+          "tag": {
+            "type": "string",
+            "format": "string"
+          },
+          "total_cost": {
+            "type": "float",
+            "format": "float"
+          }
+        }
+      },
+      "tagTotalCosts": {
+        "type": "object",
+        "properties": {
+          "tagTotalCost": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/tagTotalCost"
             }
           }
         }
