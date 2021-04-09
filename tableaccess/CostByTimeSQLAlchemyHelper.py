@@ -1,4 +1,5 @@
 import datetime
+from collections import defaultdict
 from collections import namedtuple
 
 import sqlalchemy
@@ -13,6 +14,7 @@ service_agg = namedtuple('service_agg', ['timestamp', 'service', 'cost_per_hour'
 tag_agg = namedtuple('tag_agg', ['timestamp', 'tag', 'cost_per_hour'])
 tag_total = namedtuple('tag_total', ['tag', 'total_cost'])
 service_total = namedtuple('service_total', ['service', 'total_cost'])
+tag_and_service_total = namedtuple('tag_and_service_total', ['service', 'tag', 'total_cost'])
 
 
 class CbyTSQLAlchemyTableHelper:
@@ -274,9 +276,28 @@ class CbyTSQLAlchemyTableHelper:
             return_list.append(service_total(service, total_cost_by_service)._asdict())
         return return_list
 
+    def total_cost_by_service_and_tag(self, cloud_type: CloudType, n_hour_prior=5):
+        """
+        Estimated total cost by service and tag
+        :param cloud_type:
+        :param n_hour_prior:
+        :return:
+        """
+        return_list = []
+        per_hour_costs = self.aggregate_by_service_and_tag(cloud_type, n_hour_prior)
+        agg = defaultdict(lambda: defaultdict(lambda: 0))
+        for item in per_hour_costs:
+            agg[item['tag']][item['service']] += item['cost_per_hour']
+        for tag in agg:
+            for service in agg[tag]:
+                return_list.append(
+                    tag_and_service_total(service=service, tag=tag, total_cost=agg[tag][service])._asdict())
+        return return_list
+
 
 if __name__ == '__main__':
     cbyt = CbyTSQLAlchemyTableHelper()
-    # cbyt.add_row(cloud_type=CloudType.azure, cost=2100, service='DFX', tag='XX', timestamp=datetime.datetime.now())
-    print(cbyt.aggregate_by_service(cloud_type=CloudType.aws, n_hour_prior=10, service='CloudFormation'))
-    print(cbyt.total_cost_by_service(cloud_type=CloudType.aws, n_hour_prior=10))
+    cbyt.add_row(cloud_type=CloudType.azure, cost=2100, service='DFX', tag='XX',
+                 timestamp=datetime.datetime.now() - datetime.timedelta(hours=2))
+    # print(cbyt.aggregate_by_service(cloud_type=CloudType.aws, n_hour_prior=10, service='CloudFormation'))
+    print(cbyt.total_cost_by_service_and_tag(cloud_type=CloudType.azure, n_hour_prior=5))

@@ -134,7 +134,8 @@ def get_total_consumption_by_service(cloud_type):
         hours = int(request.args.get('hours', 5))
         cost_app.logger.info(f"Aggregating total consumption of service for {cloud_type}")
         service_filter = request.args.get('service')
-        data = table_helper.total_cost_by_service(cloud_type=CloudType(cloud_type), n_hour_prior=hours, service=service_filter)
+        data = table_helper.total_cost_by_service(cloud_type=CloudType(cloud_type), n_hour_prior=hours,
+                                                  service=service_filter)
         return make_response(jsonify(data))
     except Exception as e:
         cost_app.logger.exception(e)
@@ -148,6 +149,18 @@ def get_total_consumption_by_tag(cloud_type):
         hours = int(request.args.get('hours', 5))
         cost_app.logger.info(f'Getting total tag consumption  on {cloud_type}')
         data = table_helper.total_cost_by_tag(cloud_type=CloudType(cloud_type), n_hour_prior=hours, tag=tag_filter)
+        return make_response(jsonify(data))
+    except Exception as e:
+        cost_app.logger.exception(e)
+        return make_response(jsonify({'Exception': e.__repr__()}), 500)
+
+
+@cost_app.route("/api/v1/<cloud_type>/service/tag/total", methods=["GET"])
+def get_total_consumption_by_service_and_tag(cloud_type):
+    try:
+        hours = int(request.args.get('hours', 5))
+        cost_app.logger.info(f"Getting total for service and tags on {cloud_type}")
+        data = table_helper.total_cost_by_service_and_tag(cloud_type=CloudType(cloud_type), n_hour_prior=hours)
         return make_response(jsonify(data))
     except Exception as e:
         cost_app.logger.exception(e)

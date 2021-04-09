@@ -349,6 +349,41 @@
           }
         }
       }
+    },
+     "/api/v1/{cloud_type}/service/tag/total": {
+      "parameters": [
+        {
+          "name": "cloud_type",
+          "in": "path",
+          "required": true,
+          "description": "CloudType",
+          "type": "string"
+        },
+        {
+          "name": "hours",
+          "in": "query",
+          "required": false,
+          "description": "Last n hours",
+          "type": "integer"
+        }
+      ],
+      "get": {
+        "tags": [
+          "serviceAndTagTotalCost"
+        ],
+        "summary": "Returns total cost of service and tags for last N hours",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/components/schemas/serviceAndTagTotalCosts"
+            }
+          },
+          "500": {
+            "description": "Failed. Internal Server Error"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -485,6 +520,34 @@
             "type": "object",
             "additionalProperties": {
               "$ref": "#/components/schemas/tagTotalCost"
+            }
+          }
+        }
+      },
+      "serviceAndTagTotalCost": {
+        "type": "object",
+        "properties": {
+          "service": {
+            "type": "string",
+            "format": "string"
+          },
+          "tag": {
+            "type": "string",
+            "format": "string"
+          },
+          "total_cost": {
+            "type": "float",
+            "format": "float"
+          }
+        }
+      },
+      "serviceAndTagTotalCosts": {
+        "type": "object",
+        "properties": {
+          "serviceAndTagTotalCost": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/serviceAndTagTotalCost"
             }
           }
         }
